@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي - ملف الطالب</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           لوحة الألوان الأساسية (Dark Theme)
+           ========================================= */
+        :root {
+            --bg-color: #081B33;
+            --card-bg: #0B2545;
+            --primary: #00AEEF;
+            --primary-hover: #008CBE;
+            --success: #00C851;
+            --warning: #FFBB33;
+            --danger: #FF4A4A;
+            --text-main: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --border-color: #1A365D;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            padding-right: 260px; /* مساحة القائمة الجانبية */
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .page-container {
+            padding: 30px;
+        }
+
+        /* رأس الصفحة وزر العودة */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background-color: var(--border-color);
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           بطاقة بيانات الطالب العلوية (Profile Card)
+           ========================================= */
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #0056b3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: #FFF;
+            border: 4px solid var(--border-color);
+            box-shadow: 0 0 15px rgba(0, 174, 239, 0.3);
+        }
+
+        .profile-info { flex: 1; }
+        
+        .profile-name { font-size: 24px; font-weight: 800; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        
+        .student-code { font-size: 14px; color: var(--text-muted); background-color: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color); }
+        
+        .profile-details { display: flex; gap: 30px; margin-top: 15px; color: var(--text-muted); font-size: 14px; }
+        .profile-details i { color: var(--primary); margin-left: 5px; }
+
+        .profile-actions { display: flex; gap: 10px; }
+        .btn-action { padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-primary { background-color: var(--primary); color: #FFF; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--border-color); }
+
+        /* =========================================
+           نظام التبويبات (Tabs System)
+           ========================================= */
+        .tabs-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover { color: var(--text-main); background-color: rgba(255,255,255,0.02); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background-color: rgba(0, 174, 239, 0.05); }
+
+        .tab-content { display: none; padding: 30px; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           تنسيقات محتوى التبويبات الداخلية
+           ========================================= */
+        
+        /* الجداول العامة */
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th { color: var(--text-muted); font-size: 13px; padding: 12px; border-bottom: 2px solid var(--border-color); }
+        td { padding: 15px 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+        tbody tr:hover { background-color: rgba(255,255,255,0.02); }
+
+        /* الشارات (Badges) */
+        .badge { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-success { background-color: rgba(0, 200, 81, 0.15); color: var(--success); border: 1px solid rgba(0, 200, 81, 0.3); }
+        .badge-warning { background-color: rgba(255, 187, 51, 0.15); color: var(--warning); border: 1px solid rgba(255, 187, 51, 0.3); }
+
+        /* الملاحظات */
+        .notes-area { display: flex; flex-direction: column; gap: 15px; }
+        .note-card { background-color: rgba(0,0,0,0.2); border-right: 4px solid var(--primary); padding: 15px; border-radius: 8px; }
+        .note-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .note-text { font-size: 14px; line-height: 1.6; }
+        
+        .add-note-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-note-box input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: rgba(0,0,0,0.2); color: var(--text-main); outline: none; font-family: 'Tajawal'; }
+        .add-note-box input:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="page-container">
+            
+            <div class="page-header">
+                <a href="list.html" class="btn-back"><i class="fa-solid fa-arrow-right"></i> عودة لقائمة الطلاب</a>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">
+                        <span id="studentName">أحمد محمد علي</span>
+                        <span class="student-code" id="studentCode">PR-0001</span>
+                        <span class="badge badge-success">نشط</span>
+                    </div>
+                    <div class="profile-details">
+                        <div><i class="fa-solid fa-phone"></i> الطالب: <span dir="ltr">01012345678</span></div>
+                        <div><i class="fa-solid fa-phone-volume"></i> ولي الأمر: <span dir="ltr">01198765432</span></div>
+                        <div><i class="fa-solid fa-calendar-check"></i> تاريخ التسجيل: 05 مايو 2026</div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-action btn-outline" onclick="window.location.href='add.html?edit=PR-0001'"><i class="fa-solid fa-pen"></i> تعديل</button>
+                    <button class="btn-action btn-primary"><i class="fa-solid fa-file-invoice-dollar"></i> دفع قسط</button>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab('overview', this)">نظرة عامة</button>
+                    <button class="tab-btn" onclick="openTab('courses', this)">الكورسات والجروبات</button>
+                    <button class="tab-btn" onclick="openTab('payments', this)">السجل المالي</button>
+                    <button class="tab-btn" onclick="openTab('attendance', this)">الحضور والغياب</button>
+                    <button class="tab-btn" onclick="openTab('notes', this)">ملاحظات الإدارة</button>
+                </div>
+
+                <div id="overview" class="tab-content active">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">ملخص الأداء</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center;">
+                            <i class="fa-solid fa-book-open" style="font-size: 24px; color: var(--primary); margin-bottom: 10px;"></i>
+                            <h4 style="color: var(--text-muted); font-size: 14px;">الكورسات الحالية</h4>
+                            <p style="font-size: 20px; font-weight: bold; margin-top: 5px;">1 كورس</p>
+                        </div>
+                        <div style="background-color: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center;">
+                            <i class="fa-solid fa-sack-dollar" style="font-size: 24px; color: var(--success); margin-bottom: 10px;"></i>
+                            <h4 style="color: var(--text-muted); font-size: 14px;">إجمالي المدفوعات</h4>
+                            <p style="font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--success);">800 ج.م</p>
+                        </div>
+                        <div style="background-color: rgba(255,74,74,0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,74,74,0.3); text-align: center;">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; color: var(--danger); margin-bottom: 10px;"></i>
+                            <h4 style="color: var(--text-muted); font-size: 14px;">المديونية (المتبقي)</h4>
+                            <p style="font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--danger);">500 ج.م</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="courses" class="tab-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الكورس</th>
+                                <th>كود الجروب</th>
+                                <th>المدرب</th>
+                                <th>المستوى الحالي</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Python Programming</td>
+                                <td><span style="color: var(--primary); font-weight: bold;">PY-MON-001</span></td>
+                                <td>م. شهد محمد</td>
+                                <td>مستوى 2</td>
+                                <td><span class="badge badge-success">مستمر</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="payments" class="tab-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الإيصال</th>
+                                <th>التاريخ</th>
+                                <th>البيان (عن مستوى)</th>
+                                <th>المبلغ</th>
+                                <th>المسؤول</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RC-2026-00142</td>
+                                <td>05 مايو 2026</td>
+                                <td>دفعة مقدمة - مستوى 1</td>
+                                <td><span style="color: var(--success); font-weight: bold;">400 ج.م</span></td>
+                                <td>أدمن النظام</td>
+                            </tr>
+                            <tr>
+                                <td>RC-2026-00210</td>
+                                <td>01 يونيو 2026</td>
+                                <td>قسط - مستوى 2</td>
+                                <td><span style="color: var(--success); font-weight: bold;">400 ج.م</span></td>
+                                <td>أدمن النظام</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="attendance" class="tab-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الجروب</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>04 يونيو 2026</td>
+                                <td>PY-MON-001</td>
+                                <td><span class="badge badge-success">حاضر</span></td>
+                            </tr>
+                            <tr>
+                                <td>28 مايو 2026</td>
+                                <td>PY-MON-001</td>
+                                <td><span class="badge badge-warning" style="background-color: rgba(255,74,74,0.1); color: var(--danger); border-color: rgba(255,74,74,0.3);">غائب</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="notes" class="tab-content">
+                    <div class="add-note-box">
+                        <input type="text" placeholder="اكتب ملاحظة جديدة عن الطالب (مثال: طلب تأجيل الكورس للشهر القادم)...">
+                        <button class="btn-action btn-primary"><i class="fa-solid fa-plus"></i> إضافة</button>
+                    </div>
+                    
+                    <div class="notes-area">
+                        <div class="note-card">
+                            <div class="note-header">
+                                <span><i class="fa-solid fa-user-pen"></i> م. شهد محمد</span>
+                                <span><i class="fa-regular fa-clock"></i> 02 يونيو 2026 - 10:30 صباحاً</span>
+                            </div>
+                            <div class="note-text">
+                                الطالب مستواه ممتاز في الـ Python، يرجى ترشيحه لمسابقة الروبوتكس القادمة.
+                            </div>
+                        </div>
+                        <div class="note-card" style="border-right-color: var(--danger);">
+                            <div class="note-header">
+                                <span><i class="fa-solid fa-user-tie"></i> إدارة الحسابات</span>
+                                <span><i class="fa-regular fa-clock"></i> 20 مايو 2026 - 02:15 مساءً</span>
+                            </div>
+                            <div class="note-text">
+                                ولي الأمر طلب تأجيل دفع قسط المستوى الثاني لمنتصف الشهر. تمت الموافقة.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // حقن الـ Sidebar والـ Navbar
+        if (!localStorage.getItem("erp_token")) window.location.replace("../login.html");
+
+        Promise.all([
+            fetch('../components/sidebar.html').then(res => res.text()),
+            fetch('../components/navbar.html').then(res => res.text())
+        ]).then(([sidebarData, navbarData]) => {
+            document.getElementById('sidebar-container').innerHTML = sidebarData;
+            Array.from(document.getElementById('sidebar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+            
+            document.getElementById('navbar-container').innerHTML = navbarData;
+            Array.from(document.getElementById('navbar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+        });
+
+        // ==========================================
+        // نظام التبويبات (Tabs Logic)
+        // ==========================================
+        function openTab(tabId, element) {
+            // إخفاء كل المحتوى
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // إزالة التنشيط من كل الأزرار
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // تفعيل التبويب المطلوب
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // ==========================================
+        // محاكاة جلب بيانات الطالب بناءً على الرابط
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // استخراج كود الطالب من الرابط (مثال: profile.html?id=PR-0001)
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('id');
+            
+            if(studentId) {
+                document.getElementById('studentCode').innerText = studentId;
+                // لاحقاً: هنا سيتم استدعاء API لجلب بيانات الطالب باستخدام studentId
+            }
+        });
+    </script>
+</body>
+</html>
