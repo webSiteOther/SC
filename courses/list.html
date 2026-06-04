@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي - إدارة الكورسات</title>
+    
+    <!-- خطوط جوجل (تجوال) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة الأيقونات (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           لوحة الألوان الأساسية (Dark Theme)
+           ========================================= */
+        :root {
+            --bg-color: #081B33;
+            --card-bg: #0B2545;
+            --primary: #00AEEF;
+            --primary-hover: #008CBE;
+            --success: #00C851;
+            --warning: #FFBB33;
+            --danger: #FF4A4A;
+            --text-main: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --border-color: #1A365D;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            padding-right: 260px; /* مساحة القائمة الجانبية */
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .page-container {
+            padding: 30px;
+        }
+
+        /* ترويسة الصفحة (العنوان والأزرار) */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary { background-color: var(--primary); color: #FFF; }
+        .btn-primary:hover { background-color: var(--primary-hover); box-shadow: 0 4px 10px rgba(0, 174, 239, 0.3); }
+        
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--border-color); }
+
+        /* لوحة التحكم (الفلاتر والبحث) */
+        .controls-panel {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 15px;
+            flex: 1;
+            min-width: 250px;
+            transition: 0.3s;
+        }
+
+        .filter-group:focus-within {
+            border-color: var(--primary);
+        }
+
+        .filter-group i {
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+
+        .filter-group input, .filter-group select {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .filter-group select option {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+        }
+
+        /* جدول البيانات */
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        thead {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        th {
+            padding: 15px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* الشارات (Badges) للأقسام */
+        .dept-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+        
+        .dept-prog { border-left: 3px solid #00AEEF; }
+        .dept-kids { border-left: 3px solid #FFBB33; }
+        .dept-ai   { border-left: 3px solid #9C27B0; }
+        .dept-lang { border-left: 3px solid #00C851; }
+
+        /* أزرار الإجراءات */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #FFF;
+        }
+
+        .btn-view { background-color: rgba(0, 174, 239, 0.2); color: var(--primary); }
+        .btn-view:hover { background-color: var(--primary); color: #FFF; }
+        
+        .btn-edit { background-color: rgba(255, 187, 51, 0.2); color: var(--warning); }
+        .btn-edit:hover { background-color: var(--warning); color: #000; }
+    </style>
+</head>
+<body>
+
+    <!-- حقن القائمة الجانبية -->
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        
+        <!-- حقن الشريط العلوي -->
+        <div id="navbar-container"></div>
+
+        <!-- محتوى الصفحة الفعلي -->
+        <div class="page-container">
+            
+            <div class="page-header">
+                <h1 class="page-title"><i class="fa-solid fa-book-open"></i> إدارة الكورسات والأقسام</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="alert('واجهة إدارة الأقسام قيد التطوير')"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
+                    <a href="create.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> إضافة كورس جديد</a>
+                </div>
+            </div>
+
+            <!-- لوحة الفلاتر والبحث -->
+            <div class="controls-panel">
+                <div class="filter-group">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث باسم الكورس أو الكود...">
+                </div>
+
+                <div class="filter-group" style="flex: 0.5;">
+                    <i class="fa-solid fa-filter"></i>
+                    <select id="deptFilter">
+                        <option value="all">جميع الأقسام</option>
+                        <option value="البرمجة">قسم البرمجة للبالغين</option>
+                        <option value="الأطفال">قسم البرمجة للأطفال</option>
+                        <option value="الذكاء الاصطناعي">قسم الذكاء الاصطناعي</option>
+                        <option value="اللغات">قسم اللغات</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- جدول عرض الكورسات -->
+            <div class="table-container">
+                <table id="coursesTable">
+                    <thead>
+                        <tr>
+                            <th>كود الكورس</th>
+                            <th>اسم الكورس</th>
+                            <th>القسم الأكاديمي</th>
+                            <th>مدة الكورس</th>
+                            <th>عدد المستويات</th>
+                            <th>تكلفة المستوى</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- بيانات وهمية (Mock Data) كعينة -->
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">CRS-201</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">Python Programming Foundation</td>
+                            <td><span class="dept-badge dept-prog">البرمجة</span></td>
+                            <td>3 شهور</td>
+                            <td>3 مستويات</td>
+                            <td style="color: var(--success); font-weight: bold;">800 ج.م</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-view" title="التفاصيل والجروبات" onclick="window.location.href='details.html?id=CRS-201'"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل الكورس" onclick="window.location.href='create.html?edit=CRS-201'"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">CRS-101</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">Scratch Kids Level 1</td>
+                            <td><span class="dept-badge dept-kids">الأطفال</span></td>
+                            <td>شهر ونصف</td>
+                            <td>2 مستوى</td>
+                            <td style="color: var(--success); font-weight: bold;">400 ج.م</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-view" title="التفاصيل والجروبات" onclick="window.location.href='details.html?id=CRS-101'"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل الكورس"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">CRS-202</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">Applied AI Track</td>
+                            <td><span class="dept-badge dept-ai">الذكاء الاصطناعي</span></td>
+                            <td>6 شهور</td>
+                            <td>4 مستويات</td>
+                            <td style="color: var(--success); font-weight: bold;">1200 ج.م</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-view" title="التفاصيل والجروبات"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل الكورس"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">CRS-301</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">English Level 1</td>
+                            <td><span class="dept-badge dept-lang">اللغات</span></td>
+                            <td>شهرين</td>
+                            <td>1 مستوى</td>
+                            <td style="color: var(--success); font-weight: bold;">300 ج.م</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-view" title="التفاصيل والجروبات"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل الكورس"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // نظام الحماية
+        if (!localStorage.getItem("erp_token")) window.location.replace("../login.html");
+
+        // حقن المكونات المشتركة
+        Promise.all([
+            fetch('../components/sidebar.html').then(res => res.text()),
+            fetch('../components/navbar.html').then(res => res.text())
+        ]).then(([sidebarData, navbarData]) => {
+            document.getElementById('sidebar-container').innerHTML = sidebarData;
+            Array.from(document.getElementById('sidebar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+            
+            document.getElementById('navbar-container').innerHTML = navbarData;
+            Array.from(document.getElementById('navbar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+        });
+
+        // وظيفة البحث السريع (Client-side Search)
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                let rowText = rows[i].innerText.toLowerCase();
+                if (rowText.includes(filter)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+
+        // وظيفة فلترة الأقسام
+        document.getElementById('deptFilter').addEventListener('change', function() {
+            let filter = this.value;
+            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                let deptCell = rows[i].getElementsByTagName('td')[2].innerText;
+                if (filter === "all" || deptCell.includes(filter)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
