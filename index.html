@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي - تسجيل الدخول</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           لوحة الألوان المستوحاة من اللوجو
+           ========================================= */
+        :root {
+            --bg-color: #081B33;       /* كحلي غامق جداً للخلفية */
+            --card-bg: #0B2545;        /* كحلي أفتح قليلاً للبطاقة */
+            --primary: #00AEEF;        /* السماوي اللامع للأزرار */
+            --primary-hover: #008CBE;  /* سماوي غامق عند لمس الزر */
+            --text-main: #FFFFFF;      /* أبيض للنصوص */
+            --text-muted: #A0AEC0;     /* رمادي للنصوص الفرعية */
+            --border-color: #1A365D;   /* لون الحدود */
+            --error-color: #FF4A4A;    /* لون رسائل الخطأ */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(circle at top right, #0B2545 0%, transparent 40%);
+        }
+
+        /* حاوية تسجيل الدخول (البطاقة) */
+        .login-container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* تنسيق اللوجو لأنه JPEG بخلفية بيضاء */
+        .logo-wrapper {
+            background-color: #FFFFFF;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%; /* يجعله دائرياً */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 174, 239, 0.3);
+        }
+
+        .logo-wrapper img {
+            width: 85%; /* تصغير بسيط ليناسب الدائرة */
+            height: auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* تنسيق الحقول (Inputs) */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 174, 239, 0.2);
+        }
+
+        /* تنسيق الزر */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #4A5568;
+            cursor: not-allowed;
+        }
+
+        /* التنبيهات والأخطاء */
+        .alert {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none; /* مخفي افتراضياً */
+        }
+        
+        .alert.error {
+            display: block;
+            background-color: rgba(255, 74, 74, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* تأثير الظهور */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* أيقونة التحميل */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            display: none; /* مخفي افتراضياً */
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-wrapper">
+            <img src="logo.jpeg" alt="المركز العلمي - بني سويف">
+        </div>
+
+        <h1>المركز العلمي</h1>
+        <p class="subtitle">نظام الإدارة المتكامل (ERP System)</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button type="submit" id="loginBtn">
+                <span id="btnText">تسجيل الدخول</span>
+                <span class="spinner" id="spinner"></span>
+            </button>
+            
+            <div id="alertMsg" class="alert"></div>
+        </form>
+    </div>
+
+    <script>
+        // رابط الـ API الخاص بـ Google Apps Script الذي قمتِ بإنشائه
+        const API_URL = "https://script.google.com/macros/s/AKfycbwoRefYkNxnuRvHKU23GLkUws8fY4lcY9wzX7V6W_VImIU4FkqyNWMFY0zB2AXQhsUt/exec";
+
+        // التحقق مما إذا كان المستخدم مسجلاً للدخول بالفعل
+        window.onload = () => {
+            if (localStorage.getItem("erp_token")) {
+                window.location.href = "dashboard.html"; // توجيه للوحة التحكم مباشرة
+            }
+        };
+
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('spinner');
+        const alertMsg = document.getElementById('alertMsg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // منع إعادة تحميل الصفحة
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // إخفاء أي رسائل خطأ سابقة وتشغيل الأنيميشن
+            alertMsg.className = "alert";
+            alertMsg.style.display = "none";
+            loginBtn.disabled = true;
+            btnText.innerText = "جاري التحقق...";
+            spinner.style.display = "inline-block";
+
+            try {
+                // إرسال الطلب إلى قاعدة البيانات (Apps Script)
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    // يجب استخدام text/plain لتجنب مشاكل الـ CORS مع جوجل
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: "login",
+                        payload: { username: username, password: password }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // حفظ بيانات الدخول في المتصفح
+                    localStorage.setItem("erp_token", result.token);
+                    localStorage.setItem("erp_role", result.role);
+                    
+                    btnText.innerText = "تم بنجاح! جاري التوجيه...";
+                    spinner.style.display = "none";
+                    
+                    // الانتقال لصفحة لوحة التحكم
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                } else {
+                    // عرض رسالة الخطأ
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                // إرجاع الزر لحالته الطبيعية وعرض الخطأ
+                loginBtn.disabled = false;
+                btnText.innerText = "تسجيل الدخول";
+                spinner.style.display = "none";
+                
+                alertMsg.innerText = error.message || "حدث خطأ في الاتصال بالسيرفر.";
+                alertMsg.className = "alert error";
+            }
+        });
+    </script>
+</body>
+</html>
