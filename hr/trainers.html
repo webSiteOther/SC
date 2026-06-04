@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي - إدارة المدربين (HR)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           لوحة الألوان الأساسية (Dark Theme)
+           ========================================= */
+        :root {
+            --bg-color: #081B33;
+            --card-bg: #0B2545;
+            --primary: #00AEEF;
+            --primary-hover: #008CBE;
+            --success: #00C851;
+            --warning: #FFBB33;
+            --danger: #FF4A4A;
+            --purple: #9C27B0;
+            --text-main: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --border-color: #1A365D;
+            --input-bg: rgba(0,0,0,0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            padding-right: 260px; /* مساحة القائمة الجانبية */
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .page-container {
+            padding: 30px;
+        }
+
+        /* ترويسة الصفحة */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i { color: var(--primary); }
+
+        .header-actions { display: flex; gap: 10px; }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary { background-color: var(--primary); color: #FFF; }
+        .btn-primary:hover { background-color: var(--primary-hover); box-shadow: 0 4px 10px rgba(0, 174, 239, 0.3); }
+
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--border-color); }
+
+        /* =========================================
+           مؤشرات الأداء للموارد البشرية
+           ========================================= */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s;
+        }
+
+        .kpi-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            color: #FFF;
+        }
+
+        .bg-blue { background: linear-gradient(135deg, var(--primary), #0056b3); }
+        .bg-orange { background: linear-gradient(135deg, var(--warning), #CC8800); }
+        .bg-green { background: linear-gradient(135deg, var(--success), #007E33); }
+        .bg-purple { background: linear-gradient(135deg, var(--purple), #6A1B9A); }
+
+        .kpi-data h4 { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 5px; }
+        .kpi-data p { font-size: 24px; font-weight: 800; color: var(--text-main); }
+
+        /* =========================================
+           لوحة الفلاتر
+           ========================================= */
+        .controls-panel {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 15px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group:focus-within { border-color: var(--primary); }
+        .filter-group i { color: var(--text-muted); margin-left: 10px; }
+
+        .filter-group input, .filter-group select {
+            background: none; border: none; color: var(--text-main);
+            outline: none; width: 100%; font-size: 14px; font-family: 'Tajawal';
+        }
+        
+        .filter-group select option { background-color: var(--card-bg); color: var(--text-main); }
+
+        /* =========================================
+           جدول المدربين
+           ========================================= */
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        thead { background-color: rgba(0, 0, 0, 0.2); border-bottom: 2px solid var(--border-color); }
+        th { padding: 15px; color: var(--text-muted); font-size: 13px; font-weight: 700; }
+        td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 14px; color: var(--text-main); }
+        tbody tr { transition: background-color 0.2s; }
+        tbody tr:hover { background-color: rgba(255, 255, 255, 0.02); }
+
+        /* الشارات (Badges) */
+        .badge { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-fixed { background-color: rgba(0, 174, 239, 0.15); color: var(--primary); border: 1px solid rgba(0, 174, 239, 0.3); }
+        .badge-percent { background-color: rgba(255, 187, 51, 0.15); color: var(--warning); border: 1px solid rgba(255, 187, 51, 0.3); }
+
+        /* التقييم بالنجوم */
+        .rating { color: #FFD700; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+
+        /* أزرار الإجراءات */
+        .action-btns { display: flex; gap: 8px; }
+        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; color: #FFF; }
+        .btn-view { background-color: rgba(0, 174, 239, 0.2); color: var(--primary); }
+        .btn-view:hover { background-color: var(--primary); color: #FFF; }
+        .btn-edit { background-color: rgba(255, 187, 51, 0.2); color: var(--warning); }
+        .btn-edit:hover { background-color: var(--warning); color: #000; }
+        .btn-payroll { background-color: rgba(0, 200, 81, 0.2); color: var(--success); }
+        .btn-payroll:hover { background-color: var(--success); color: #FFF; }
+
+        /* =========================================
+           النافذة المنبثقة (Modal) لإضافة مدرب
+           ========================================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); display: none;
+            justify-content: center; align-items: center; z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; width: 100%; max-width: 600px; padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5); animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: bold; color: var(--primary); display:flex; align-items:center; gap:8px;}
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--danger); }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: span 2; }
+        .form-group label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .form-group select, .form-group input { padding: 12px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-family: 'Tajawal'; outline: none; transition: 0.3s; }
+        .form-group select:focus, .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0, 174, 239, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <div id="navbar-container"></div>
+
+        <div class="page-container">
+            
+            <div class="page-header">
+                <h1 class="page-title"><i class="fa-solid fa-chalkboard-user"></i> إدارة المدربين وهيئة التدريس</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="alert('تصدير بيانات المدربين للإكسيل')"><i class="fa-solid fa-file-excel"></i> تصدير إكسيل</button>
+                    <button class="btn btn-primary" onclick="openModal()"><i class="fa-solid fa-user-plus"></i> تسجيل مدرب جديد</button>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue"><i class="fa-solid fa-users-viewfinder"></i></div>
+                    <div class="kpi-data">
+                        <h4>إجمالي المدربين</h4>
+                        <p>12 مدرب</p>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-orange"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="kpi-data">
+                        <h4>الجروبات النشطة حالياً</h4>
+                        <p>18 جروب</p>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple"><i class="fa-solid fa-star"></i></div>
+                    <div class="kpi-data">
+                        <h4>متوسط تقييم الطلاب</h4>
+                        <p class="rating">4.7 <i class="fa-solid fa-star" style="font-size: 16px;"></i></p>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green"><i class="fa-solid fa-money-check-dollar"></i></div>
+                    <div class="kpi-data">
+                        <h4>مستحقات معلقة للمدربين</h4>
+                        <p>8,500 ج.م</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="filter-group">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث باسم المدرب، التخصص، أو الكود...">
+                </div>
+
+                <div class="filter-group" style="flex: 0.5;">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <select id="specialtyFilter">
+                        <option value="all">كل التخصصات</option>
+                        <option value="برمجة">البرمجة (Python, C++)</option>
+                        <option value="أطفال">برمجة الأطفال (Scratch)</option>
+                        <option value="ذكاء اصطناعي">الذكاء الاصطناعي وعلوم البيانات</option>
+                        <option value="لغات">اللغات</option>
+                    </select>
+                </div>
+
+                <div class="filter-group" style="flex: 0.5;">
+                    <i class="fa-solid fa-file-contract"></i>
+                    <select id="salaryFilter">
+                        <option value="all">كل أنظمة التعاقد</option>
+                        <option value="نسبة">نسبة من الإيراد</option>
+                        <option value="ثابت">راتب شهري ثابت</option>
+                        <option value="ساعة">نظام الساعات</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="trainersTable">
+                    <thead>
+                        <tr>
+                            <th>الكود</th>
+                            <th>اسم المدرب</th>
+                            <th>رقم الهاتف</th>
+                            <th>التخصص التقني</th>
+                            <th>نظام التعاقد</th>
+                            <th>الجروبات النشطة</th>
+                            <th>التقييم</th>
+                            <th>إجراءات / رواتب</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">TR-001</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">م. شهد محمد</td>
+                            <td dir="ltr" style="text-align: right;">010xxxxxxxx</td>
+                            <td>البرمجة / AI</td>
+                            <td><span class="badge badge-percent">نسبة (40%)</span></td>
+                            <td><span style="font-weight: bold;">3 جروبات</span></td>
+                            <td class="rating">4.9 <i class="fa-solid fa-star"></i></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-payroll" title="إصدار الراتب / المستحقات" onclick="window.location.href='payroll.html?id=TR-001'"><i class="fa-solid fa-sack-dollar"></i></button>
+                                    <button class="btn-icon btn-view" title="ملف المدرب" onclick="window.location.href='trainer-profile.html?id=TR-001'"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">TR-002</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">م. مريم طه</td>
+                            <td dir="ltr" style="text-align: right;">011xxxxxxxx</td>
+                            <td>برمجة الأطفال (Scratch)</td>
+                            <td><span class="badge badge-percent">نسبة (35%)</span></td>
+                            <td><span style="font-weight: bold;">2 جروب</span></td>
+                            <td class="rating">4.8 <i class="fa-solid fa-star"></i></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-payroll" title="إصدار الراتب / المستحقات"><i class="fa-solid fa-sack-dollar"></i></button>
+                                    <button class="btn-icon btn-view" title="ملف المدرب"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">TR-003</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">م. ياسمين عمر</td>
+                            <td dir="ltr" style="text-align: right;">012xxxxxxxx</td>
+                            <td>الذكاء الاصطناعي</td>
+                            <td><span class="badge badge-fixed">راتب ثابت</span></td>
+                            <td><span style="font-weight: bold;">1 جروب</span></td>
+                            <td class="rating">4.7 <i class="fa-solid fa-star"></i></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-payroll" title="إصدار الراتب / المستحقات"><i class="fa-solid fa-sack-dollar"></i></button>
+                                    <button class="btn-icon btn-view" title="ملف المدرب"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: var(--text-muted); font-size: 12px;">TR-004</span></td>
+                            <td style="font-weight: bold; color: var(--primary);">م. شروق عبدالونيس</td>
+                            <td dir="ltr" style="text-align: right;">010xxxxxxxx</td>
+                            <td>اللغات الأساسية</td>
+                            <td><span class="badge badge-fixed">بالساعة (100 ج)</span></td>
+                            <td><span style="font-weight: bold;">2 جروب</span></td>
+                            <td class="rating">4.5 <i class="fa-solid fa-star"></i></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-payroll" title="إصدار الراتب / المستحقات"><i class="fa-solid fa-sack-dollar"></i></button>
+                                    <button class="btn-icon btn-view" title="ملف المدرب"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn-icon btn-edit" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="addTrainerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-user-plus"></i> تعيين مدرب جديد</div>
+                <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="trainerForm">
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>اسم المدرب (الرباعي)</label>
+                        <input type="text" id="trName" placeholder="مثال: م. أحمد محمد محمود" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم الهاتف الأساسي</label>
+                        <input type="tel" id="trPhone" placeholder="01xxxxxxxxx" required dir="ltr" style="text-align:right;">
+                    </div>
+                    <div class="form-group">
+                        <label>التخصص الأكاديمي الرئيسي</label>
+                        <select required id="trSpecialty">
+                            <option value="" disabled selected>-- اختر التخصص --</option>
+                            <option value="البرمجة / AI">برمجة وذكاء اصطناعي</option>
+                            <option value="برمجة الأطفال">مسارات الأطفال (Kids)</option>
+                            <option value="لغات">لغات ومهارات</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row" style="background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px;">
+                    <div class="form-group">
+                        <label style="color: var(--warning);"><i class="fa-solid fa-file-contract"></i> نظام التعاقد</label>
+                        <select required id="trSalaryType" onchange="toggleSalaryField()">
+                            <option value="" disabled selected>-- اختر النظام --</option>
+                            <option value="percentage">نسبة من إيرادات الجروب</option>
+                            <option value="fixed">راتب شهري ثابت</option>
+                            <option value="hourly">نظام الساعات</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="salaryLabel">القيمة (النسبة % أو المبلغ)</label>
+                        <input type="number" required id="trSalaryValue" min="1" placeholder="أدخل الرقم...">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px; padding: 12px; font-size: 16px;">
+                    <i class="fa-solid fa-check"></i> حفظ بيانات المدرب
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // حقن المكونات المشتركة
+        if (!localStorage.getItem("erp_token")) window.location.replace("../login.html");
+
+        Promise.all([
+            fetch('../components/sidebar.html').then(res => res.text()),
+            fetch('../components/navbar.html').then(res => res.text())
+        ]).then(([sidebarData, navbarData]) => {
+            document.getElementById('sidebar-container').innerHTML = sidebarData;
+            Array.from(document.getElementById('sidebar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+            
+            document.getElementById('navbar-container').innerHTML = navbarData;
+            Array.from(document.getElementById('navbar-container').getElementsByTagName('script')).forEach(s => eval(s.innerText));
+        });
+
+        // دوال الفلترة والبحث
+        document.getElementById('searchInput').addEventListener('keyup', filterTable);
+        document.getElementById('specialtyFilter').addEventListener('change', filterTable);
+        document.getElementById('salaryFilter').addEventListener('change', filterTable);
+
+        function filterTable() {
+            let searchVal = document.getElementById('searchInput').value.toLowerCase();
+            let specVal = document.getElementById('specialtyFilter').value;
+            let salVal = document.getElementById('salaryFilter').value;
+            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                let text = rows[i].innerText.toLowerCase();
+                let specCell = rows[i].getElementsByTagName('td')[3].innerText;
+                let salCell = rows[i].getElementsByTagName('td')[4].innerText;
+                
+                let matchesSearch = text.includes(searchVal);
+                let matchesSpec = (specVal === "all" || specCell.includes(specVal));
+                let matchesSal = (salVal === "all" || salCell.includes(salVal));
+
+                if (matchesSearch && matchesSpec && matchesSal) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        // ==========================================
+        // التحكم في الـ Modal
+        // ==========================================
+        const modal = document.getElementById('addTrainerModal');
+        
+        function openModal() { modal.classList.add('active'); }
+        function closeModal() { modal.classList.remove('active'); document.getElementById('trainerForm').reset(); }
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        // تغيير تسمية حقل الراتب بناءً على نوع التعاقد
+        function toggleSalaryField() {
+            const type = document.getElementById('trSalaryType').value;
+            const label = document.getElementById('salaryLabel');
+            const input = document.getElementById('trSalaryValue');
+            
+            if(type === 'percentage') {
+                label.innerText = 'نسبة المدرب من الإيراد (%)';
+                input.placeholder = 'مثال: 40';
+            } else if (type === 'fixed') {
+                label.innerText = 'الراتب الشهري (ج.م)';
+                input.placeholder = 'مثال: 3000';
+            } else if (type === 'hourly') {
+                label.innerText = 'سعر ساعة الشرح (ج.م)';
+                input.placeholder = 'مثال: 100';
+            }
+        }
+
+        // محاكاة إرسال البيانات
+        document.getElementById('trainerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('trName').value;
+            alert(`تم تسجيل بيانات المدرب "${name}" بنجاح في النظام.`);
+            closeModal();
+            // سيتم استدعاء API Backend هنا لحفظ البيانات في 09_Trainers
+        });
+    </script>
+</body>
+</html>
