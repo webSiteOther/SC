@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي - تسجيل الدخول</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           لوحة ألوان المركز العلمي (Dark Theme)
+           ========================================= */
+        :root {
+            --bg-color: #081B33;       /* كحلي غامق جداً */
+            --card-bg: #0B2545;        /* كحلي أفتح للبطاقة */
+            --primary: #00AEEF;        /* سماوي لامع */
+            --primary-hover: #008CBE;  /* سماوي غامق */
+            --text-main: #FFFFFF;      /* أبيض */
+            --text-muted: #A0AEC0;     /* رمادي فاتح */
+            --border-color: #1A365D;   /* حدود البطاقات */
+            --error-color: #FF4A4A;    /* أحمر للأخطاء */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* تأثير إضاءة خافتة في الخلفية */
+            background-image: radial-gradient(circle at 50% 0%, #113663 0%, transparent 60%);
+        }
+
+        /* حاوية تسجيل الدخول */
+        .login-box {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        /* تنسيق اللوجو */
+        .logo-container {
+            background-color: #FFFFFF;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 25px auto;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 25px rgba(0, 174, 239, 0.2);
+        }
+
+        .logo-container img {
+            width: 85%;
+            height: auto;
+        }
+
+        .header-text h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .header-text p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* حقول الإدخال */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background-color: #061426;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 174, 239, 0.15);
+        }
+
+        /* خيارات إضافية (تذكرني) */
+        .options-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me input {
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* زر الدخول */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 5px 15px rgba(0, 174, 239, 0.3);
+        }
+
+        .btn-login:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* رسائل النظام (خطأ / نجاح) */
+        .status-msg {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-msg.error {
+            display: block;
+            background-color: rgba(255, 74, 74, 0.1);
+            color: var(--error-color);
+            border: 1px solid rgba(255, 74, 74, 0.3);
+        }
+
+        /* علامة التحميل */
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <div class="logo-container">
+            <img src="logo.jpeg" alt="المركز العلمي">
+        </div>
+
+        <div class="header-text">
+            <h1>المركز العلمي</h1>
+            <p>بوابة الدخول للنظام (ERP)</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+            </div>
+
+            <div class="options-group">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    تذكر بياناتي
+                </label>
+                <span style="cursor: pointer; color: var(--primary);">نسيت كلمة المرور؟</span>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span id="btnText">دخول للنظام</span>
+                <div class="loader" id="loader"></div>
+            </button>
+            
+            <div id="statusMsg" class="status-msg"></div>
+        </form>
+    </div>
+
+    <script>
+        // رابط الـ API للباك إند
+        const API_URL = "https://script.google.com/macros/s/AKfycbwoRefYkNxnuRvHKU23GLkUws8fY4lcY9wzX7V6W_VImIU4FkqyNWMFY0zB2AXQhsUt/exec";
+
+        // التحقق المسبق من الجلسة
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem("erp_token")) {
+                window.location.replace("dashboard.html");
+            }
+            // جلب بيانات "تذكرني" لو موجودة
+            if (localStorage.getItem("saved_username")) {
+                document.getElementById('username').value = localStorage.getItem("saved_username");
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        // تعريف العناصر
+        const form = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = document.getElementById('btnText');
+        const loader = document.getElementById('loader');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // التعامل مع الإرسال
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // إعداد حالة التحميل
+            statusMsg.style.display = "none";
+            statusMsg.className = "status-msg";
+            loginBtn.disabled = true;
+            btnText.innerText = "جاري التحقق...";
+            loader.style.display = "block";
+
+            try {
+                // إرسال الطلب لـ Google Apps Script
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: "login",
+                        payload: { username: username, password: password }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // حفظ التوكن (Token)
+                    localStorage.setItem("erp_token", result.token);
+                    localStorage.setItem("erp_role", result.role);
+                    
+                    // ميزة تذكرني
+                    if(rememberMe) {
+                        localStorage.setItem("saved_username", username);
+                    } else {
+                        localStorage.removeItem("saved_username");
+                    }
+
+                    // نجاح العملية
+                    btnText.innerText = "تم بنجاح! جاري الدخول...";
+                    loader.style.display = "none";
+                    loginBtn.style.backgroundColor = "#00C851"; // أخضر للنجاح
+                    
+                    // توجيه للوحة التحكم
+                    setTimeout(() => {
+                        window.location.replace("dashboard.html");
+                    }, 800);
+
+                } else {
+                    throw new Error(result.message || "بيانات الدخول غير صحيحة");
+                }
+
+            } catch (error) {
+                // إرجاع الزر لحالته وإظهار الخطأ
+                loginBtn.disabled = false;
+                btnText.innerText = "دخول للنظام";
+                loader.style.display = "none";
+                loginBtn.style.backgroundColor = "var(--primary)";
+                
+                statusMsg.innerText = error.message;
+                statusMsg.className = "status-msg error";
+            }
+        });
+    </script>
+</body>
+</html>
