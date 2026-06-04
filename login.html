@@ -7,19 +7,19 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* =========================================
-           لوحة ألوان المركز العلمي (Dark Theme)
-           ========================================= */
         :root {
-            --bg-color: #081B33;       /* كحلي غامق جداً */
-            --card-bg: #0B2545;        /* كحلي أفتح للبطاقة */
-            --primary: #00AEEF;        /* سماوي لامع */
-            --primary-hover: #008CBE;  /* سماوي غامق */
-            --text-main: #FFFFFF;      /* أبيض */
-            --text-muted: #A0AEC0;     /* رمادي فاتح */
-            --border-color: #1A365D;   /* حدود البطاقات */
-            --error-color: #FF4A4A;    /* أحمر للأخطاء */
+            --bg-color: #081B33;
+            --card-bg: #0B2545;
+            --primary: #00AEEF;
+            --primary-hover: #008CBE;
+            --danger: #FF4A4A;
+            --text-main: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --border-color: #1A365D;
+            --input-bg: rgba(0, 0, 0, 0.3);
         }
 
         * {
@@ -35,303 +35,217 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            /* تأثير إضاءة خافتة في الخلفية */
-            background-image: radial-gradient(circle at 50% 0%, #113663 0%, transparent 60%);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* حاوية تسجيل الدخول */
-        .login-box {
+        .login-container {
             background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            width: 100%;
-            max-width: 400px;
             border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             text-align: center;
-            animation: slideUp 0.6s ease-out;
         }
 
-        /* تنسيق اللوجو */
-        .logo-container {
-            background-color: #FFFFFF;
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 25px auto;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 25px rgba(0, 174, 239, 0.2);
+        .login-logo {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
         }
 
-        .logo-container img {
-            width: 85%;
-            height: auto;
+        .login-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        .header-text h1 {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 5px;
-            color: var(--text-main);
-        }
-
-        .header-text p {
-            color: var(--text-muted);
+        .login-subtitle {
             font-size: 14px;
+            color: var(--text-muted);
             margin-bottom: 30px;
         }
 
-        /* حقول الإدخال */
         .form-group {
-            margin-bottom: 20px;
             text-align: right;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 14px;
-            background-color: #061426;
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: var(--text-main);
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s ease;
+            padding: 0 15px;
+            transition: 0.3s;
         }
 
-        .form-group input:focus {
+        .input-wrapper:focus-within {
             border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 174, 239, 0.15);
+            box-shadow: 0 0 8px rgba(0, 174, 239, 0.2);
         }
 
-        /* خيارات إضافية (تذكرني) */
-        .options-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            font-size: 13px;
+        .input-wrapper i {
             color: var(--text-muted);
+            margin-left: 10px;
         }
 
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .remember-me input {
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        /* زر الدخول */
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
-            color: #fff;
+        .input-wrapper input {
+            background: none;
             border: none;
+            color: var(--text-main);
+            width: 100%;
+            padding: 12px 0;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: right;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
+            border: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .btn-login:hover {
+        .btn-primary {
+            background-color: var(--primary);
+            color: #FFF;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
             background-color: var(--primary-hover);
-            box-shadow: 0 5px 15px rgba(0, 174, 239, 0.3);
         }
 
-        .btn-login:disabled {
-            background-color: var(--border-color);
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
             color: var(--text-muted);
-            cursor: not-allowed;
-            box-shadow: none;
+            font-size: 12px;
+            margin: 20px 0;
         }
 
-        /* رسائل النظام (خطأ / نجاح) */
-        .status-msg {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            display: none;
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .status-msg.error {
-            display: block;
-            background-color: rgba(255, 74, 74, 0.1);
-            color: var(--error-color);
-            border: 1px solid rgba(255, 74, 74, 0.3);
+        .divider:not(:empty)::before { margin-left: .25em; }
+        .divider:not(:empty)::after { margin-right: .25em; }
+
+        .btn-bypass {
+            background-color: rgba(255, 187, 51, 0.1);
+            border: 1px dashed var(--warning);
+            color: var(--warning);
         }
 
-        /* علامة التحميل */
-        .loader {
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-bypass:hover {
+            background-color: var(--warning);
+            color: #000;
         }
     </style>
 </head>
 <body>
 
-    <div class="login-box">
-        <div class="logo-container">
-            <img src="logo.jpeg" alt="المركز العلمي">
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
         </div>
-
-        <div class="header-text">
-            <h1>المركز العلمي</h1>
-            <p>بوابة الدخول للنظام (ERP)</p>
-        </div>
+        <h2 class="login-title">نظام الإدارة الإلكتروني</h2>
+        <p class="login-subtitle">المركز العلمي للتدريب والتطوير</p>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="username">اسم المستخدم</label>
-                <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+                <label>اسم المستخدم</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="password">كلمة المرور</label>
-                <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+                <label>كلمة المرور</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+                </div>
             </div>
 
-            <div class="options-group">
-                <label class="remember-me">
-                    <input type="checkbox" id="rememberMe">
-                    تذكر بياناتي
-                </label>
-                <span style="cursor: pointer; color: var(--primary);">نسيت كلمة المرور؟</span>
+            <div class="error-message" id="errorMsg">
+                <i class="fa-solid fa-circle-exclamation"></i> خطأ في اسم المستخدم أو كلمة المرور، يرجى المحاولة مرة أخرى.
             </div>
 
-            <button type="submit" class="btn-login" id="loginBtn">
-                <span id="btnText">دخول للنظام</span>
-                <div class="loader" id="loader"></div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
             </button>
-            
-            <div id="statusMsg" class="status-msg"></div>
         </form>
+
+        <div class="divider">بيئة التطوير المحلية</div>
+
+        <button class="btn btn-bypass" onclick="bypassLogin()">
+            <i class="fa-solid fa-bolt"></i> تخطي الحماية والدخول المباشر
+        </button>
     </div>
 
     <script>
-        // رابط الـ API للباك إند
-        const API_URL = "https://script.google.com/macros/s/AKfycbwoRefYkNxnuRvHKU23GLkUws8fY4lcY9wzX7V6W_VImIU4FkqyNWMFY0zB2AXQhsUt/exec";
+        // تنظيف التوكن القديم عند فتح صفحة اللوجن للتأكد من تصفير الحالة
+        localStorage.removeItem('erp_token');
 
-        // التحقق المسبق من الجلسة
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem("erp_token")) {
-                window.location.replace("dashboard.html");
-            }
-            // جلب بيانات "تذكرني" لو موجودة
-            if (localStorage.getItem("saved_username")) {
-                document.getElementById('username').value = localStorage.getItem("saved_username");
-                document.getElementById('rememberMe').checked = true;
-            }
-        });
-
-        // تعريف العناصر
-        const form = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const btnText = document.getElementById('btnText');
-        const loader = document.getElementById('loader');
-        const statusMsg = document.getElementById('statusMsg');
-
-        // التعامل مع الإرسال
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('errorMsg');
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const rememberMe = document.getElementById('rememberMe').checked;
-
-            // إعداد حالة التحميل
-            statusMsg.style.display = "none";
-            statusMsg.className = "status-msg";
-            loginBtn.disabled = true;
-            btnText.innerText = "جاري التحقق...";
-            loader.style.display = "block";
-
-            try {
-                // إرسال الطلب لـ Google Apps Script
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: "login",
-                        payload: { username: username, password: password }
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    // حفظ التوكن (Token)
-                    localStorage.setItem("erp_token", result.token);
-                    localStorage.setItem("erp_role", result.role);
-                    
-                    // ميزة تذكرني
-                    if(rememberMe) {
-                        localStorage.setItem("saved_username", username);
-                    } else {
-                        localStorage.removeItem("saved_username");
-                    }
-
-                    // نجاح العملية
-                    btnText.innerText = "تم بنجاح! جاري الدخول...";
-                    loader.style.display = "none";
-                    loginBtn.style.backgroundColor = "#00C851"; // أخضر للنجاح
-                    
-                    // توجيه للوحة التحكم
-                    setTimeout(() => {
-                        window.location.replace("dashboard.html");
-                    }, 800);
-
-                } else {
-                    throw new Error(result.message || "بيانات الدخول غير صحيحة");
-                }
-
-            } catch (error) {
-                // إرجاع الزر لحالته وإظهار الخطأ
-                loginBtn.disabled = false;
-                btnText.innerText = "دخول للنظام";
-                loader.style.display = "none";
-                loginBtn.style.backgroundColor = "var(--primary)";
-                
-                statusMsg.innerText = error.message;
-                statusMsg.className = "status-msg error";
+            // التحقق من الحساب الافتراضي
+            if (user === 'admin' && pass === 'admin123') {
+                errorDiv.style.display = 'none';
+                // تخزين توكن محاكي في المتصفح
+                localStorage.setItem('erp_token', 'secure_mock_token_2026');
+                // التوجه إلى لوحة التحكم الرئيسية (تأكدي من صحة مسار الملف لديكِ)
+                window.location.replace('dashboard.html'); 
+            } else {
+                errorDiv.style.display = 'flex';
             }
         });
+
+        // دالة التخطي السريع دون كتابة بيانات
+        function bypassLogin() {
+            localStorage.setItem('erp_token', 'bypass_development_token_active');
+            window.location.replace('dashboard.html');
+        }
     </script>
 </body>
 </html>
