@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي | إدارة الكورسات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1A43BF;
+            --secondary-blue: #38B6FF;
+            --bg-dark: #0a1128;
+            --surface-dark: #121e3f;
+            --surface-hover: #1c2b59;
+            --text-light: #ffffff;
+            --text-muted: #a0aec0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-light); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- Sidebar Styles --- */
+        .sidebar { width: 260px; background-color: var(--surface-dark); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; right: 0; top: 0; z-index: 100; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h2 { color: var(--secondary-blue); font-size: 22px; }
+        .nav-links { list-style: none; padding: 15px 0; flex: 1; overflow-y: auto; }
+        .nav-links a { display: flex; align-items: center; padding: 12px 20px; color: var(--text-muted); text-decoration: none; transition: 0.3s; border-right: 3px solid transparent; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--surface-hover); color: var(--text-light); border-right-color: var(--secondary-blue); }
+        .nav-links a i { margin-left: 15px; width: 20px; text-align: center; font-size: 18px;}
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; margin-right: 260px; padding: 20px 30px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26, 67, 191, 0.4); }
+        .btn-secondary { background: rgba(56, 182, 255, 0.1); color: var(--secondary-blue); border: 1px solid var(--secondary-blue); padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .btn-secondary:hover { background: var(--secondary-blue); color: white; }
+        .btn-danger-icon { background: rgba(220, 53, 69, 0.1); color: var(--danger); border: none; padding: 8px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        .btn-danger-icon:hover { background: var(--danger); color: white; }
+
+        /* --- Data Table --- */
+        .table-container { background: var(--surface-dark); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(0,0,0,0.2); color: var(--secondary-blue); font-weight: bold; }
+        tr:hover { background-color: var(--surface-hover); }
+        
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-active { background: rgba(40, 167, 69, 0.2); color: var(--success); }
+        .status-inactive { background: rgba(220, 53, 69, 0.2); color: var(--danger); }
+        .dept-badge { background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 13px;}
+
+        /* --- Modal Styles --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--surface-dark); width: 100%; max-width: 700px; border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
+        .modal-header h3 { color: var(--secondary-blue); }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: var(--text-light); font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--secondary-blue); }
+        
+        /* Extra Fees Section */
+        .extra-fees-section { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 20px;}
+        .fee-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 10px; background: var(--surface-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);}
+        
+        /* Loading Overlay */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; gap: 15px; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--secondary-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="color: var(--secondary-blue);">جاري تحميل الكورسات والأقسام...</p>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>المركز العلمي</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="navigate('dashboard')"><i class="fas fa-home"></i>الرئيسية</a></li>
+            <li><a href="#" onclick="navigate('students')"><i class="fas fa-user-graduate"></i>إدارة الطلاب</a></li>
+            <li><a href="#" class="active"><i class="fas fa-book"></i>الكورسات والأقسام</a></li>
+            <hr style="border-color: rgba(255,255,255,0.05); margin: 10px 20px;">
+            <li><a href="#" onclick="navigate('departments')"><i class="fas fa-layer-group"></i>إدارة الأقسام</a></li>
+            <li><a href="#" onclick="navigate('users')"><i class="fas fa-users-cog"></i>المستخدمين</a></li>
+            <li><a href="#" onclick="navigate('audit-log')"><i class="fas fa-history"></i>سجل العمليات</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h2 style="color: var(--text-light);">إدارة الكورسات التعليمية</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">قاعدة البيانات التعليمية المركزية وإعدادات الرسوم</p>
+            </div>
+            <button class="btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> إضافة كورس جديد
+            </button>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الكود</th>
+                        <th>اسم الكورس</th>
+                        <th>القسم التابع له</th>
+                        <th>عدد المستويات</th>
+                        <th>سعر المستوى</th>
+                        <th>المدة</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="coursesTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة كورس جديد</h3>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addCourseForm">
+                
+                <div class="form-group">
+                    <label>القسم التابع له</label>
+                    <select id="courseDept" required>
+                        <option value="" disabled selected>جاري تحميل الأقسام...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>اسم الكورس (مثال: Flutter Development)</label>
+                    <input type="text" id="courseName" required placeholder="أدخل اسم الكورس">
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>عدد المستويات (مثال: 30)</label>
+                        <input type="number" id="levelsCount" required min="1" placeholder="مثال: 30">
+                    </div>
+                    <div class="form-group">
+                        <label>سعر المستوى الواحد (جنيه)</label>
+                        <input type="number" id="levelPrice" required min="0" placeholder="مثال: 250">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>مدة المستوى (مثال: 1 Month)</label>
+                        <input type="text" id="levelDuration" required placeholder="مثال: شهر واحد">
+                    </div>
+                    <div class="form-group">
+                        <label>حالة الكورس</label>
+                        <select id="courseStatus">
+                            <option value="Active">نشط</option>
+                            <option value="Inactive">موقوف</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="extra-fees-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="color: var(--secondary-blue);"><i class="fas fa-money-check-alt" style="margin-left: 8px;"></i>الرسوم الإضافية المرتبطة بالكورس</h4>
+                        <button type="button" class="btn-secondary" onclick="addFeeRow()"><i class="fas fa-plus"></i> إضافة رسوم</button>
+                    </div>
+                    <div id="feesContainer">
+                        <p id="noFeesMsg" style="color: var(--text-muted); font-size: 13px; text-align: center;">لا توجد رسوم إضافية. يمكنك إضافتها (مثل رسوم الكتاب، الشهادة، إلخ).</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 25px;" id="saveBtn">
+                    حفظ الكورس وإعدادات الرسوم
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // تخزين الأقسام لربطها بالجدول
+        let departmentsMap = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var role = localStorage.getItem("role");
+            if (role !== 'R001') {
+                alert("عفواً، لا تملك صلاحية الدخول لهذه الصفحة.");
+                navigate('dashboard');
+                return;
+            }
+            loadInitialData();
+        });
+
+        // جلب الأقسام والكورسات في طلب واحد لتقليل التحميل
+        function loadInitialData() {
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    populateDepartmentsDropdown(response.departments);
+                    renderCoursesTable(response.courses, response.departments);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في جلب البيانات: ' + err);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .getCoursesAndDepartments();
+        }
+
+        function populateDepartmentsDropdown(departments) {
+            var select = document.getElementById('courseDept');
+            select.innerHTML = '<option value="" disabled selected>اختر القسم</option>';
+            
+            departments.forEach(function(dept) {
+                if(dept.status === 'Active') {
+                    var option = document.createElement('option');
+                    option.value = dept.deptId;
+                    option.text = dept.deptName + ' (' + dept.deptCode + ')';
+                    select.appendChild(option);
+                }
+                // تخزينها للمطابقة في الجدول
+                departmentsMap[dept.deptId] = dept.deptName;
+            });
+        }
+
+        function renderCoursesTable(courses) {
+            var tbody = document.getElementById('coursesTableBody');
+            tbody.innerHTML = '';
+            
+            courses.forEach(function(course) {
+                var statusClass = course.status === 'Active' ? 'status-active' : 'status-inactive';
+                var statusText = course.status === 'Active' ? 'نشط' : 'موقوف';
+                var deptName = departmentsMap[course.deptId] || 'غير محدد';
+
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--secondary-blue); font-weight: bold;">${course.courseId}</td>
+                    <td style="font-weight: bold;">${course.courseName}</td>
+                    <td><span class="dept-badge">${deptName}</span></td>
+                    <td>${course.levelsCount}</td>
+                    <td>${course.levelPrice} ج.م</td>
+                    <td>${course.duration}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- ديناميكية الرسوم الإضافية ---
+        function addFeeRow() {
+            document.getElementById('noFeesMsg').style.display = 'none';
+            var container = document.getElementById('feesContainer');
+            
+            var row = document.createElement('div');
+            row.className = 'fee-row';
+            row.innerHTML = `
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 12px;">اسم الرسوم (كتاب، شهادة..)</label>
+                    <input type="text" class="fee-name" required placeholder="مثال: كتاب المستوى الأول">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 12px;">المبلغ (ج.م)</label>
+                    <input type="number" class="fee-amount" required min="0" placeholder="100">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 12px;">تُدفع في Level رقم</label>
+                    <input type="number" class="fee-level" required min="1" placeholder="1">
+                </div>
+                <div style="padding-bottom: 5px;">
+                    <button type="button" class="btn-danger-icon" onclick="this.parentElement.parentElement.remove(); checkEmptyFees();"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function checkEmptyFees() {
+            var container = document.getElementById('feesContainer');
+            if(container.querySelectorAll('.fee-row').length === 0) {
+                document.getElementById('noFeesMsg').style.display = 'block';
+            }
+        }
+
+        // حفظ الكورس
+        document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var maxLevels = parseInt(document.getElementById('levelsCount').value);
+            var feesRows = document.querySelectorAll('.fee-row');
+            var extraFees = [];
+            var isValid = true;
+
+            // جمع بيانات الرسوم الإضافية والتحقق منها
+            feesRows.forEach(function(row) {
+                var level = parseInt(row.querySelector('.fee-level').value);
+                if(level > maxLevels) {
+                    alert('خطأ: لقد حددت الرسوم الإضافية للمستوى رقم ' + level + ' ولكن الكورس يتكون من ' + maxLevels + ' مستويات فقط!');
+                    isValid = false;
+                }
+                extraFees.push({
+                    name: row.querySelector('.fee-name').value,
+                    amount: row.querySelector('.fee-amount').value,
+                    payInLevel: level
+                });
+            });
+
+            if(!isValid) return;
+
+            var btn = document.getElementById('saveBtn');
+            btn.innerText = 'جاري الحفظ...';
+            btn.disabled = true;
+
+            var courseData = {
+                deptId: document.getElementById('courseDept').value,
+                courseName: document.getElementById('courseName').value,
+                levelsCount: maxLevels,
+                levelPrice: document.getElementById('levelPrice').value,
+                duration: document.getElementById('levelDuration').value,
+                status: document.getElementById('courseStatus').value
+            };
+
+            var currentUserId = localStorage.getItem("userId");
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if(response.success) {
+                        alert('تم إضافة الكورس والرسوم الإضافية بنجاح! كود: ' + response.newId);
+                        closeModal();
+                        document.getElementById('addCourseForm').reset();
+                        document.getElementById('feesContainer').innerHTML = '<p id="noFeesMsg" style="color: var(--text-muted); font-size: 13px; text-align: center;">لا توجد رسوم إضافية. يمكنك إضافتها (مثل رسوم الكتاب، الشهادة، إلخ).</p>';
+                        document.getElementById('loadingOverlay').style.display = 'flex';
+                        loadInitialData();
+                    } else {
+                        alert('خطأ: ' + response.message);
+                    }
+                    btn.innerText = 'حفظ الكورس وإعدادات الرسوم';
+                    btn.disabled = false;
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في الاتصال: ' + err);
+                    btn.innerText = 'حفظ الكورس وإعدادات الرسوم';
+                    btn.disabled = false;
+                })
+                .addCourseWithFees(courseData, extraFees, currentUserId);
+        });
+
+        // دوال مساعدة
+        function openModal() { document.getElementById('courseModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('courseModal').style.display = 'none'; }
+        function navigate(pageName) { window.top.location.href = google.script.host.origin + google.script.host.pathname + "?page=" + pageName; }
+    </script>
+</body>
+</html>
