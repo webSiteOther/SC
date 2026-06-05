@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي | إدارة المستخدمين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* نفس المتغيرات والألوان المتفق عليها */
+        :root {
+            --primary-blue: #1A43BF;
+            --secondary-blue: #38B6FF;
+            --bg-dark: #0a1128;
+            --surface-dark: #121e3f;
+            --surface-hover: #1c2b59;
+            --text-light: #ffffff;
+            --text-muted: #a0aec0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-light); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- Sidebar Styles (نفس الستايل من لوحة التحكم) --- */
+        .sidebar { width: 260px; background-color: var(--surface-dark); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; right: 0; top: 0; z-index: 100; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h2 { color: var(--secondary-blue); font-size: 22px; }
+        .nav-links { list-style: none; padding: 15px 0; flex: 1; overflow-y: auto; }
+        .nav-links a { display: flex; align-items: center; padding: 12px 20px; color: var(--text-muted); text-decoration: none; transition: 0.3s; border-right: 3px solid transparent; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--surface-hover); color: var(--text-light); border-right-color: var(--secondary-blue); }
+        .nav-links a i { margin-left: 15px; width: 20px; text-align: center; font-size: 18px;}
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; margin-right: 260px; padding: 20px 30px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26, 67, 191, 0.4); }
+
+        /* --- Data Table --- */
+        .table-container { background: var(--surface-dark); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(0,0,0,0.2); color: var(--secondary-blue); font-weight: bold; }
+        tr:hover { background-color: var(--surface-hover); }
+        
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-active { background: rgba(40, 167, 69, 0.2); color: var(--success); }
+        .status-inactive { background: rgba(220, 53, 69, 0.2); color: var(--danger); }
+
+        /* --- Modal Styles --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--surface-dark); width: 100%; max-width: 500px; border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); position: relative; }
+        .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { color: var(--secondary-blue); }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: var(--text-light); font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--secondary-blue); }
+        
+        /* Loading Overlay */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; gap: 15px; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--secondary-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* حقل الدور (مخفي افتراضياً) */
+        #floorGroup { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="color: var(--secondary-blue);">جاري تحميل بيانات المستخدمين...</p>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>المركز العلمي</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="navigate('dashboard')"><i class="fas fa-home"></i>الرئيسية</a></li>
+            <li><a href="#" onclick="navigate('students')"><i class="fas fa-user-graduate"></i>إدارة الطلاب</a></li>
+            <hr style="border-color: rgba(255,255,255,0.05); margin: 10px 20px;">
+            <li><a href="#" class="active"><i class="fas fa-users-cog"></i>المستخدمين</a></li>
+            <li><a href="#" onclick="navigate('audit-log')"><i class="fas fa-history"></i>سجل العمليات</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h2 style="color: var(--text-light);">إدارة المستخدمين والصلاحيات</h2>
+            </div>
+            <button class="btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> إضافة مستخدم جديد
+            </button>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الكود</th>
+                        <th>الاسم بالكامل</th>
+                        <th>اسم المستخدم</th>
+                        <th>الصلاحية</th>
+                        <th>الهاتف</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة مستخدم جديد</h3>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>الاسم بالكامل</label>
+                    <input type="text" id="fullName" required placeholder="مثال: أحمد محمود">
+                </div>
+                <div class="form-group" style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label>اسم المستخدم (للدخول)</label>
+                        <input type="text" id="username" required placeholder="مثال: ahmed.m">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="password" required placeholder="***">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="phone" required placeholder="01xxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>الصلاحية (الدور الوظيفي)</label>
+                    <select id="roleId" required onchange="handleRoleChange()">
+                        <option value="" disabled selected>اختر الصلاحية</option>
+                        <option value="R001">مدير النظام (Admin)</option>
+                        <option value="R002">الحسابات (Accounts)</option>
+                        <option value="R003">مسؤول دور (Floor Supervisor)</option>
+                        <option value="R004">الجداول (Scheduler)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="floorGroup">
+                    <label>اختر الدور المسؤول عنه</label>
+                    <select id="floorId">
+                        <option value="" disabled selected>اختر الدور</option>
+                        <option value="1">الدور الأول</option>
+                        <option value="2">الدور الثاني</option>
+                        <option value="3">الدور الثالث</option>
+                        <option value="4">الدور الرابع</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>الحالة</label>
+                    <select id="status">
+                        <option value="Active">نشط</option>
+                        <option value="Inactive">موقوف</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;" id="saveBtn">
+                    حفظ بيانات المستخدم
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. فحص الأمان (يجب أن يكون المستخدم Admin)
+        document.addEventListener('DOMContentLoaded', function() {
+            var role = localStorage.getItem("role");
+            if (role !== 'R001') {
+                alert("عفواً، لا تملك صلاحية الدخول لهذه الصفحة.");
+                navigate('dashboard');
+                return;
+            }
+            loadUsers();
+        });
+
+        // 2. جلب بيانات المستخدمين من الشيت
+        function loadUsers() {
+            google.script.run
+                .withSuccessHandler(function(users) {
+                    renderTable(users);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في جلب البيانات: ' + err);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .getUsersList();
+        }
+
+        // 3. رسم الجدول بالبيانات
+        function renderTable(users) {
+            var tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(function(user) {
+                var statusClass = user.status === 'Active' ? 'status-active' : 'status-inactive';
+                var statusText = user.status === 'Active' ? 'نشط' : 'موقوف';
+                var roleName = getRoleNameInArabic(user.roleId);
+
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--secondary-blue); font-weight: bold;">${user.userId}</td>
+                    <td>${user.fullName}</td>
+                    <td>${user.username}</td>
+                    <td>${roleName} ${user.floorId ? '(دور '+user.floorId+')' : ''}</td>
+                    <td>${user.phone}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. إظهار/إخفاء حقل (الدور) بناءً على الصلاحية المختارة
+        function handleRoleChange() {
+            var roleSelect = document.getElementById('roleId').value;
+            var floorGroup = document.getElementById('floorGroup');
+            var floorInput = document.getElementById('floorId');
+            
+            if (roleSelect === 'R003') { // R003 هو كود مسؤول الدور
+                floorGroup.style.display = 'block';
+                floorInput.required = true;
+            } else {
+                floorGroup.style.display = 'none';
+                floorInput.required = false;
+                floorInput.value = ''; // تصفية القيمة
+            }
+        }
+
+        // 5. حفظ المستخدم الجديد (إرسال للـ Backend)
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var btn = document.getElementById('saveBtn');
+            btn.innerText = 'جاري الحفظ...';
+            btn.disabled = true;
+
+            var userData = {
+                fullName: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value,
+                roleId: document.getElementById('roleId').value,
+                floorId: document.getElementById('floorId').value || "",
+                status: document.getElementById('status').value
+            };
+
+            var currentUserId = localStorage.getItem("userId"); // لمعرفة من قام بالإضافة لتسجيلها في Audit Log
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if(response.success) {
+                        alert('تم إضافة المستخدم بنجاح! كود المستخدم: ' + response.newId);
+                        closeModal();
+                        document.getElementById('addUserForm').reset();
+                        document.getElementById('loadingOverlay').style.display = 'flex';
+                        loadUsers(); // إعادة تحميل الجدول
+                    } else {
+                        alert('خطأ: ' + response.message);
+                    }
+                    btn.innerText = 'حفظ بيانات المستخدم';
+                    btn.disabled = false;
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في الاتصال: ' + err);
+                    btn.innerText = 'حفظ بيانات المستخدم';
+                    btn.disabled = false;
+                })
+                .addUser(userData, currentUserId);
+        });
+
+        // دوال مساعدة
+        function openModal() { document.getElementById('userModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('userModal').style.display = 'none'; }
+        function navigate(pageName) { window.top.location.href = google.script.host.origin + google.script.host.pathname + "?page=" + pageName; }
+        
+        function getRoleNameInArabic(roleId) {
+            const roles = { 'R001': 'مدير النظام', 'R002': 'الحسابات', 'R003': 'مسؤول دور', 'R004': 'الجداول' };
+            return roles[roleId] || roleId;
+        }
+    </script>
+</body>
+</html>
