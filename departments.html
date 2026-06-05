@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركز العلمي | إدارة الأقسام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1A43BF;
+            --secondary-blue: #38B6FF;
+            --bg-dark: #0a1128;
+            --surface-dark: #121e3f;
+            --surface-hover: #1c2b59;
+            --text-light: #ffffff;
+            --text-muted: #a0aec0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-light); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- Sidebar Styles --- */
+        .sidebar { width: 260px; background-color: var(--surface-dark); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; right: 0; top: 0; z-index: 100; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h2 { color: var(--secondary-blue); font-size: 22px; }
+        .nav-links { list-style: none; padding: 15px 0; flex: 1; overflow-y: auto; }
+        .nav-links a { display: flex; align-items: center; padding: 12px 20px; color: var(--text-muted); text-decoration: none; transition: 0.3s; border-right: 3px solid transparent; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--surface-hover); color: var(--text-light); border-right-color: var(--secondary-blue); }
+        .nav-links a i { margin-left: 15px; width: 20px; text-align: center; font-size: 18px;}
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; margin-right: 260px; padding: 20px 30px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26, 67, 191, 0.4); }
+
+        /* --- Data Table --- */
+        .table-container { background: var(--surface-dark); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+        th { background-color: rgba(0,0,0,0.2); color: var(--secondary-blue); font-weight: bold; }
+        tr:hover { background-color: var(--surface-hover); }
+        
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-active { background: rgba(40, 167, 69, 0.2); color: var(--success); }
+        .status-inactive { background: rgba(220, 53, 69, 0.2); color: var(--danger); }
+        
+        .code-badge { background: rgba(56, 182, 255, 0.1); color: var(--secondary-blue); padding: 4px 8px; border-radius: 4px; font-family: monospace; font-weight: bold;}
+
+        /* --- Modal Styles --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--surface-dark); width: 100%; max-width: 500px; border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); position: relative; }
+        .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { color: var(--secondary-blue); }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: var(--text-light); font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--secondary-blue); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        
+        /* Loading Overlay */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; gap: 15px; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--secondary-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="color: var(--secondary-blue);">جاري تحميل الأقسام...</p>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>المركز العلمي</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="navigate('dashboard')"><i class="fas fa-home"></i>الرئيسية</a></li>
+            <li><a href="#" onclick="navigate('students')"><i class="fas fa-user-graduate"></i>إدارة الطلاب</a></li>
+            <li><a href="#" onclick="navigate('courses')"><i class="fas fa-book"></i>الكورسات والأقسام</a></li>
+            <hr style="border-color: rgba(255,255,255,0.05); margin: 10px 20px;">
+            <li><a href="#" class="active"><i class="fas fa-layer-group"></i>إدارة الأقسام</a></li>
+            <li><a href="#" onclick="navigate('users')"><i class="fas fa-users-cog"></i>المستخدمين</a></li>
+            <li><a href="#" onclick="navigate('audit-log')"><i class="fas fa-history"></i>سجل العمليات</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h2 style="color: var(--text-light);">إدارة الأقسام التعليمية</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">كود القسم سيستخدم في توليد أكواد الطلاب (مثل PR-4582)</p>
+            </div>
+            <button class="btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> إضافة قسم جديد
+            </button>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم القسم</th>
+                        <th>كود القسم</th>
+                        <th>اسم القسم</th>
+                        <th>الوصف</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="departmentsTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="departmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة قسم جديد</h3>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addDeptForm">
+                <div class="form-group">
+                    <label>اسم القسم (مثال: Programming)</label>
+                    <input type="text" id="deptName" required placeholder="أدخل اسم القسم">
+                </div>
+                <div class="form-group">
+                    <label>كود القسم (حرفين أو ثلاثة بالإنجليزية، مثال: PR)</label>
+                    <input type="text" id="deptCode" required placeholder="مثال: PR" maxlength="4" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label>الوصف (اختياري)</label>
+                    <textarea id="deptDesc" placeholder="وصف مبسط عن القسم..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الحالة</label>
+                    <select id="deptStatus">
+                        <option value="Active">نشط</option>
+                        <option value="Inactive">موقوف</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;" id="saveBtn">
+                    حفظ بيانات القسم
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. فحص الأمان
+        document.addEventListener('DOMContentLoaded', function() {
+            var role = localStorage.getItem("role");
+            if (role !== 'R001') {
+                alert("عفواً، لا تملك صلاحية الدخول لهذه الصفحة.");
+                navigate('dashboard');
+                return;
+            }
+            loadDepartments();
+        });
+
+        // 2. جلب بيانات الأقسام
+        function loadDepartments() {
+            google.script.run
+                .withSuccessHandler(function(departments) {
+                    renderTable(departments);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في جلب البيانات: ' + err);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                })
+                .getDepartmentsList();
+        }
+
+        // 3. رسم الجدول
+        function renderTable(departments) {
+            var tbody = document.getElementById('departmentsTableBody');
+            tbody.innerHTML = '';
+            
+            departments.forEach(function(dept) {
+                var statusClass = dept.status === 'Active' ? 'status-active' : 'status-inactive';
+                var statusText = dept.status === 'Active' ? 'نشط' : 'موقوف';
+
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">${dept.deptId}</td>
+                    <td><span class="code-badge">${dept.deptCode}</span></td>
+                    <td style="font-weight: bold;">${dept.deptName}</td>
+                    <td style="color: var(--text-muted); font-size: 14px;">${dept.description}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. حفظ القسم الجديد
+        document.getElementById('addDeptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var btn = document.getElementById('saveBtn');
+            btn.innerText = 'جاري الحفظ...';
+            btn.disabled = true;
+
+            var deptData = {
+                name: document.getElementById('deptName').value,
+                code: document.getElementById('deptCode').value.toUpperCase(), // تحويل الكود لحروف كبيرة
+                description: document.getElementById('deptDesc').value,
+                status: document.getElementById('deptStatus').value
+            };
+
+            var currentUserId = localStorage.getItem("userId");
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if(response.success) {
+                        alert('تم إضافة القسم بنجاح!');
+                        closeModal();
+                        document.getElementById('addDeptForm').reset();
+                        document.getElementById('loadingOverlay').style.display = 'flex';
+                        loadDepartments(); // إعادة تحميل الجدول
+                    } else {
+                        alert('خطأ: ' + response.message);
+                    }
+                    btn.innerText = 'حفظ بيانات القسم';
+                    btn.disabled = false;
+                })
+                .withFailureHandler(function(err) {
+                    alert('خطأ في الاتصال: ' + err);
+                    btn.innerText = 'حفظ بيانات القسم';
+                    btn.disabled = false;
+                })
+                .addDepartment(deptData, currentUserId);
+        });
+
+        // دوال مساعدة
+        function openModal() { document.getElementById('departmentModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('departmentModal').style.display = 'none'; }
+        function navigate(pageName) { window.top.location.href = google.script.host.origin + google.script.host.pathname + "?page=" + pageName; }
+    </script>
+</body>
+</html>
